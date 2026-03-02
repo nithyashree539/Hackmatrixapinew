@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Face Detection</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="container">
+    <h1>AI Face Detection App</h1>
+
+    <video id="video" autoplay playsinline></video>
+
+    <button id="startBtn">Begin Scan</button>
+
+    <p id="status">Press Begin Scan</p>
+  </div>
+
+  <!-- TensorFlow -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+
+  <!-- Face Model -->
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection@1.0.5/dist/face-landmarks-detection.min.js"></script>
+
+  <!-- Your Script -->
+  <script src="script.js"></script>
+
+</body>
+</html>
