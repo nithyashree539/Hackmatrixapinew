@@ -23,7 +23,6 @@ async function setupCamera() {
 
 async function loadModel() {
   statusText.innerText = "Loading AI model...";
-
   detector = await faceLandmarksDetection.createDetector(
     faceLandmarksDetection.SupportedModels.MediaPipeFaceMesh,
     {
@@ -31,7 +30,6 @@ async function loadModel() {
       solutionPath: "https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh"
     }
   );
-
   statusText.innerText = "Model Loaded ✅";
 }
 
