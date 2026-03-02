@@ -1,32 +1,143 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-  <title>FaceCalm Demo</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CalmSpace AI | Galactic Wellness Pro</title>
+    <meta name="description"
+        content="CalmSpace AI Pro — Galactic neural biometrics dashboard with visual scan, mind flow, and cardiac sync calibration.">
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-  <div class="container">
-    <h1>FaceCalm - Stress Detection</h1>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loader-ring">
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+        <span class="loader-text">ANALYZING...</span>
+    </div>
 
-    <video id="video" autoplay playsinline></video>
+    <!-- Background Universe -->
+    <div class="universe" id="starfield">
+        <div class="planet"
+            style="width: 250px; height: 250px; background: radial-gradient(circle at 30% 30%, #3b82f6, #1e1b4b, #000); top: -50px; right: -50px;">
+            <div class="planet-ring" style="width: 310px; height: 310px; top: -30px; left: -30px;"></div>
+        </div>
+        <div class="planet" id="groundPlanet"
+            style="width: 70px; height: 70px; background: radial-gradient(circle at 30% 30%, #ec4899, #831843, #000); bottom: 15%; left: 10%;">
+        </div>
+        <div class="planet"
+            style="width: 18px; height: 18px; background: radial-gradient(circle at 30% 30%, #fbbf24, #92400e, #000); top: 50%; left: 5%; opacity: 0.5;">
+        </div>
+    </div>
 
-    <button id="startBtn">Begin Scan</button>
+    <!-- App Shell -->
+    <div class="app-container">
 
-    <p id="status">Press Begin Scan</p>
-  </div>
+        <!-- ========== HOME PAGE ========== -->
+        <div id="home" class="page active">
+            <div class="app-header">
+                <h1 class="app-title">CalmSpace <span>AI</span></h1>
+                <div class="header-actions">
+                    <button class="history-btn" onclick="toggleHistory()" aria-label="View session history"
+                        title="Session History">📊</button>
+                    <div class="header-badge">BIOMETRICS V3</div>
+                </div>
+            </div>
+            <p class="sub-label">NEURAL BIOMETRICS DASHBOARD</p>
 
-  <!-- TensorFlow -->
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+            <div class="status-card" role="status" aria-live="polite">
+                <span class="status-label">Neural Integrity</span>
+                <div class="stress-value"><span id="stressPercent">30</span>%</div>
+                <div class="progress-container">
+                    <div id="stressBar"></div>
+                </div>
+                <p id="stressType" class="status-text">Ready for Scan</p>
+            </div>
 
-  <!-- Face Landmarks -->
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/face-landmarks-detection@1.0.5/dist/face-landmarks-detection.min.js"></script>
+            <div class="solution-box" id="solBox" aria-live="polite">
+                Welcome, Voyager. Your cognitive frequency is currently stable. Select a scanning method to begin.
+            </div>
 
-  <!-- MediaPipe FaceMesh -->
-  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh/face_mesh.js"></script>
+            <!-- Recommendations from API -->
+            <div class="recs-box" id="recsBox" style="display:none;" aria-label="Recommendations"></div>
 
-  <!-- Our Script -->
-  <script src="script.js"></script>
+            <button class="mic-btn" onclick="readSolution()" aria-label="Read solution aloud">🔊</button>
 
+            <div class="action-grid">
+                <div class="tile tile-camera" onclick="nav('cameraPage')" role="button" tabindex="0"
+                    aria-label="Visual Scan">
+                    <span class="tile-emoji">📸</span>
+                    <span class="tile-label">Visual Scan</span>
+                </div>
+                <div class="tile tile-flow" onclick="nav('flowPage')" role="button" tabindex="0" aria-label="Mind Flow">
+                    <span class="tile-emoji">🌊</span>
+                    <span class="tile-label">Mind Flow</span>
+                </div>
+                <div class="tile tile-pulse" onclick="nav('pulsePage')" role="button" tabindex="0"
+                    aria-label="Cardiac Sync">
+                    <span class="tile-emoji">💎</span>
+                    <span class="tile-label">Cardiac Sync</span>
+                </div>
+                <div class="tile tile-reset" onclick="location.reload()" role="button" tabindex="0" aria-label="Reset">
+                    <span class="tile-emoji">🔄</span>
+                    <span class="tile-label">Reset</span>
+                </div>
+            </div>
+
+            <!-- Session History Panel (collapsible) -->
+            <div id="historyPanel" class="history-panel">
+                <div class="history-header">
+                    <span class="history-title">📡 SCAN HISTORY</span>
+                    <button class="history-close" onclick="toggleHistory()" aria-label="Close history">✕</button>
+                </div>
+                <div id="historyList" class="history-list">
+                    <p class="history-empty">No sessions yet. Complete a scan to begin.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== CAMERA PAGE ========== -->
+        <div id="cameraPage" class="page">
+            <span class="page-label">BIOMETRIC JITTER SCAN</span>
+            <div class="viewport">
+                <video id="webcam" autoplay playsinline></video>
+                <div class="viewport-overlay">ANALYZING MICRO-MOVEMENTS...</div>
+            </div>
+            <button class="btn" onclick="submitAnalysis()">Complete Scan</button>
+            <button class="btn btn-outline" onclick="nav('home')">Cancel</button>
+        </div>
+
+        <!-- ========== FLOW PAGE ========== -->
+        <div id="flowPage" class="page">
+            <span class="page-label">NEURAL PATHWAY FLOW</span>
+            <div class="viewport">
+                <canvas id="flowCanvas"></canvas>
+            </div>
+            <p class="flow-hint">Trace patterns with your mouse or finger to lower stress.</p>
+            <button class="btn" style="margin-top:16px;" onclick="submitAnalysis()">Submit Flow</button>
+            <button class="btn btn-outline" onclick="nav('home')">Cancel</button>
+        </div>
+
+        <!-- ========== PULSE PAGE ========== -->
+        <div id="pulsePage" class="page">
+            <span class="page-label">CARDIAC SYNC</span>
+            <div class="pulse-center">
+                <div id="tapCircle" onmousedown="tapHeart()">TAP</div>
+                <p id="bpmDisplay" class="bpm-display">-- BPM</p>
+            </div>
+            <button class="btn" onclick="submitAnalysis()">Submit Rhythm</button>
+            <button class="btn btn-outline" onclick="nav('home')">Cancel</button>
+        </div>
+    </div>
+
+    <canvas id="hiddenCanvas" style="display:none;"></canvas>
+    <script src="script.js"></script>
 </body>
-</html>
+
+</html>  
